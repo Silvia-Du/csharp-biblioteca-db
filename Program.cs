@@ -24,11 +24,13 @@ string resp2 = Console.ReadLine();
 switch (resp2)
 {
     case "y":
-        setNewDocuments();
+        printAllDocuments();
         break;
 
     case "n":
-        setNewUser();
+        //setNewUser();
+        Console.WriteLine("cerca un libro per titolo");
+        //implementazione
         break;
 
 }
@@ -48,7 +50,7 @@ void printAllDocuments()
             string title = reader.GetString(2);
             int year = reader.GetInt32(3);
             Book newBook = new(title, year, code);
-            //Console.WriteLine(newBook.Title);
+            Console.WriteLine($"Titolo: {newBook.Title}, Anno d'uscita:{newBook.Year}, isbn:{newBook.Isbn}");
         }
 
     }
