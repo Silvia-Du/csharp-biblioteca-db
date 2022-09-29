@@ -4,55 +4,63 @@ using System.Data.SqlClient;
 string connectionString = "Data Source=localhost;Initial Catalog=db_biblioteca;Integrated Security=True";
 SqlConnection sqlConnection = new(connectionString);
 
-try
+
+Console.WriteLine("inserisci un nuovo prodotto[1], Inserisci un nuovo utente[2]");
+string resp = Console.ReadLine();
+
+switch (resp)
 {
-    //test in lettura
-    sqlConnection.Open();
-    //string queryReader = $"SELECT * FROM documents";
-    //SqlCommand cmd = new(queryReader, sqlConnection);
-    //SqlDataReader reader = cmd.ExecuteReader();
+    case "1":
+        setNewDocuments();
+        break;
 
-    //while (reader.Read())
-    //{
-    //    string code = reader.GetString(1);
-    //    string title = reader.GetString(2);
-    //    int year = reader.GetInt32(3);
-    //    Book newBook = new(title, year, code);
-    //    //Console.WriteLine(newBook.Title);
-    //}
-
-    //test in scrittura
-    Console.WriteLine("Inserisci il codice");
-    string? code = Console.ReadLine();
-    Console.WriteLine("Inserisci il titolo");
-    string? title = Console.ReadLine();
-    Console.WriteLine("Inserisci l'anno d'uscita");
-    int year = Convert.ToInt32(Console.ReadLine());
-    Console.WriteLine("Inserisci l'autore");
-    string? author = Console.ReadLine();
-    Console.WriteLine("Inserisci il tipo");
-    string? type = Console.ReadLine();
-
-    string queryInsert = $"INSERT INTO documents (code, title, year, author, type) VALUES (@code, @title, @year, @author, @type);";
-    SqlCommand cmd = new(queryInsert, sqlConnection);
-
-    cmd.Parameters.Add(new SqlParameter ("@code", code));
-    cmd.Parameters.Add(new SqlParameter("@title", title));
-    cmd.Parameters.Add(new SqlParameter("@year", year));
-    cmd.Parameters.Add(new SqlParameter("@author", author));
-    cmd.Parameters.Add(new SqlParameter("@type", type));
-
-    int affectedRows = cmd.ExecuteNonQuery();
-    Console.WriteLine("salvato nel db");
+    case "2":
+        setNewUser();
+        break;
 
 }
-catch (Exception ex)
+Console.WriteLine("vuoi stampare tutta la lista degli articoli?[y/n]");
+string resp2 = Console.ReadLine();
+switch (resp2)
 {
-    Console.WriteLine(ex.Message);
+    case "y":
+        setNewDocuments();
+        break;
+
+    case "n":
+        setNewUser();
+        break;
+
 }
-finally
+
+void printAllDocuments()
 {
-    sqlConnection.Close();
+    try
+    {
+        sqlConnection.Open();
+        string queryReader = $"SELECT * FROM documents";
+        SqlCommand cmd = new(queryReader, sqlConnection);
+        SqlDataReader reader = cmd.ExecuteReader();
+
+        while (reader.Read())
+        {
+            string code = reader.GetString(1);
+            string title = reader.GetString(2);
+            int year = reader.GetInt32(3);
+            Book newBook = new(title, year, code);
+            //Console.WriteLine(newBook.Title);
+        }
+
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+    }
+    finally
+    {
+        sqlConnection.Close();
+
+    }
 }
 
 
@@ -63,15 +71,15 @@ boolTeca.books.Add(new Book("Le parole sono fineste oppure muri", 1999, "1245678
 Console.WriteLine(boolTeca.books);
 
 
-boolTeca.dvds.Add(new Dvd("Big Fish", 2003, "12356"));
-boolTeca.dvds.Add(new Dvd("Edward mani di forbici", 2003, "145236"));
-Console.WriteLine(boolTeca.Dvds);
+//boolTeca.dvds.Add(new Dvd("Big Fish", 2003, "12356"));
+//boolTeca.dvds.Add(new Dvd("Edward mani di forbici", 2003, "145236"));
+//Console.WriteLine(boolTeca.Dvds);
 
 
 
-boolTeca.users.Add(new User("Ugo", "DeUghi", "ugo@gmail.com", "password1", 389789654));
-boolTeca.users.Add(new User("Dudi", "DeDudi", "dudi@gmail.com", "password2", 389789656));
-Console.WriteLine(boolTeca.User);
+//boolTeca.users.Add(new User("Ugo", "DeUghi", "ugo@gmail.com", "password1", 389789654));
+//boolTeca.users.Add(new User("Dudi", "DeDudi", "dudi@gmail.com", "password2", 389789656));
+//Console.WriteLine(boolTeca.User);
 
 
 
@@ -202,6 +210,88 @@ void setLoan(Product response)
             }
         }
 
+    }
+}
+
+//GENERARE NUOVO UTENTE
+void setNewUser()
+{
+    try
+    {
+        sqlConnection.Open();
+        Console.WriteLine("Inserisci il nome");
+        string? name = Console.ReadLine();
+        Console.WriteLine("Inserisci il cognome");
+        string? surname = Console.ReadLine();
+        Console.WriteLine("Inserisci l'email");
+        string? email = Console.ReadLine();
+        Console.WriteLine("Inserisci la password");
+        string? password = Console.ReadLine();
+        Console.WriteLine("Inserisci il numero di telefono");
+        string? telephone = Console.ReadLine();
+
+        string queryNewUser = $"INSERT INTO users (name, surname, email, password, telephone) VALUES (@name, @surname, @email, @password, @telephone);";
+        SqlCommand cmd2 = new(queryNewUser, sqlConnection);
+
+        cmd2.Parameters.Add(new SqlParameter("@name", name));
+        cmd2.Parameters.Add(new SqlParameter("@surname", surname));
+        cmd2.Parameters.Add(new SqlParameter("@email", email));
+        cmd2.Parameters.Add(new SqlParameter("@password", password));
+        cmd2.Parameters.Add(new SqlParameter("@telephone", telephone));
+
+        int affectedRows2 = cmd2.ExecuteNonQuery();
+        Console.WriteLine(" user salvato nel db");
+
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+        //throw;
+    }
+    finally
+    {
+        sqlConnection.Close();
+    }
+}
+
+//GENERARE NUOVO prodotto
+void setNewDocuments()
+{
+    try
+    {
+        sqlConnection.Open();
+        Console.WriteLine("Inserisci il codice");
+        string? code = Console.ReadLine();
+        Console.WriteLine("Inserisci il titolo");
+        string? title = Console.ReadLine();
+        Console.WriteLine("Inserisci l'anno d'uscita");
+        int year = Convert.ToInt32(Console.ReadLine());
+        Console.WriteLine("Inserisci l'autore");
+        string? author = Console.ReadLine();
+        Console.WriteLine("Inserisci il tipo");
+        string? type = Console.ReadLine();
+
+        string queryInsert = $"INSERT INTO documents (code, title, year, author, type) VALUES (@code, @title, @year, @author, @type);";
+        SqlCommand cmd = new(queryInsert, sqlConnection);
+
+        cmd.Parameters.Add(new SqlParameter("@code", code));
+        cmd.Parameters.Add(new SqlParameter("@title", title));
+        cmd.Parameters.Add(new SqlParameter("@year", year));
+        cmd.Parameters.Add(new SqlParameter("@author", author));
+        cmd.Parameters.Add(new SqlParameter("@type", type));
+
+        int affectedRows = cmd.ExecuteNonQuery();
+        Console.WriteLine("salvato nel db");
+
+    }
+    catch (Exception ex)
+    {
+        Console.WriteLine(ex.Message);
+        //throw;
+    }
+    finally
+    {
+        sqlConnection.Close();
     }
 }
 
