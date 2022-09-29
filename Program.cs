@@ -1,4 +1,5 @@
 ﻿// See https://aka.ms/new-console-template for more information
+using System.Data;
 using System.Data.SqlClient;
 string connectionString = "Data Source=localhost;Initial Catalog=db_biblioteca;Integrated Security=True";
 SqlConnection sqlConnection = new(connectionString);
@@ -7,10 +8,42 @@ try
 {
     //test in lettura
     sqlConnection.Open();
-    string query = $"SELECT * FROM documents";
-    SqlCommand cmd = new(query, sqlConnection);
-    SqlDataReader dataReader = cmd.ExecuteReader();
-    
+    //string queryReader = $"SELECT * FROM documents";
+    //SqlCommand cmd = new(queryReader, sqlConnection);
+    //SqlDataReader reader = cmd.ExecuteReader();
+
+    //while (reader.Read())
+    //{
+    //    string code = reader.GetString(1);
+    //    string title = reader.GetString(2);
+    //    int year = reader.GetInt32(3);
+    //    Book newBook = new(title, year, code);
+    //    //Console.WriteLine(newBook.Title);
+    //}
+
+    //test in scrittura
+    Console.WriteLine("Inserisci il codice");
+    string? code = Console.ReadLine();
+    Console.WriteLine("Inserisci il titolo");
+    string? title = Console.ReadLine();
+    Console.WriteLine("Inserisci l'anno d'uscita");
+    int year = Convert.ToInt32(Console.ReadLine());
+    Console.WriteLine("Inserisci l'autore");
+    string? author = Console.ReadLine();
+    Console.WriteLine("Inserisci il tipo");
+    string? type = Console.ReadLine();
+
+    string queryInsert = $"INSERT INTO documents (code, title, year, author, type) VALUES (@code, @title, @year, @author, @type);";
+    SqlCommand cmd = new(queryInsert, sqlConnection);
+
+    cmd.Parameters.Add(new SqlParameter ("@code", code));
+    cmd.Parameters.Add(new SqlParameter("@title", title));
+    cmd.Parameters.Add(new SqlParameter("@year", year));
+    cmd.Parameters.Add(new SqlParameter("@author", author));
+    cmd.Parameters.Add(new SqlParameter("@type", type));
+
+    int affectedRows = cmd.ExecuteNonQuery();
+    Console.WriteLine("salvato nel db");
 
 }
 catch (Exception ex)
@@ -171,6 +204,8 @@ void setLoan(Product response)
 
     }
 }
+
+
 
 
 
